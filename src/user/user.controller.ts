@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
@@ -29,5 +30,11 @@ export class UserController {
     // vai transformar cada um dos itens nesse novo item que criamos:
     // ((userEntity) => new ReturnUserDto(userEntity)), estamos convertendo todos eles
     // no nosso returnUserDTO
+  }
+  @Get('/:userId')
+  async getUserById(@Param('userId') userId: number): Promise<ReturnUserDto> {
+    return new ReturnUserDto(
+      await this.userService.getUserByIdUsingRelations(userId),
+    );
   }
 }
