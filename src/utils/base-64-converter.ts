@@ -1,6 +1,6 @@
 // o jwt é divido em cabeçalho, corpo, e por ultimo as informações de segurança.
 // o corpo ta em base 64, nós vamos pegar esse base 64 e pegar um objeto que ta dentro dele.
-import { LoginPayload } from 'src/auth/dtos/loginPayload.dto';
+import { LoginPayload } from '../auth/dtos/loginPayload.dto';
 
 export const authorizationToLoginPayload = (
   authorization: string,
