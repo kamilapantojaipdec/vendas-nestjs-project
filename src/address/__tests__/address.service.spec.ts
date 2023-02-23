@@ -72,5 +72,3 @@ describe('AddressService', () => {
     ).rejects.toThrowError();
   });
 });
-
-// todas as funções do nosso AddressService agora estão testadas
