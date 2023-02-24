@@ -15,7 +15,7 @@ export class CategoryEntity {
   @Column({ name: 'name', nullable: false })
   name: string;
 
-  @Column({ name: 'created_at' })
+  @UpdateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
