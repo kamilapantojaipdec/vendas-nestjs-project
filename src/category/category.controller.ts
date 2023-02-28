@@ -26,8 +26,6 @@ export class CategoryController {
   }
 
   @Roles(UserType.Admin)
-  // Pipes tem dois casos de uso típicos: Transformação e Validação. O de Validação avalia os dados de entrada,
-  // e se forem válidos, simplesmente os transmite inalterados. caso contrário, lança uma exceção.
   @UsePipes(ValidationPipe)
   @Post()
   async createCategory(
@@ -36,3 +34,6 @@ export class CategoryController {
     return this.categoryService.createCategory(createCategory);
   }
 }
+
+// Pipes tem dois casos de uso típicos: Transformação e Validação. O de Validação avalia os dados de entrada,
+// e se forem válidos, simplesmente os transmite inalterados. caso contrário, lança uma exceção.

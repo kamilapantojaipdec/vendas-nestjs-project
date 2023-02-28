@@ -14,7 +14,7 @@ export class ProductService {
     const products = await this.productRepository.find();
 
     if (!products || products.length === 0) {
-      throw new NotFoundException('Products not found');
+      throw new NotFoundException('Not found products');
     }
 
     return products;
