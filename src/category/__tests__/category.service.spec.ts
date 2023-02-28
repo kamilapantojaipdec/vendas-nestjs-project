@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CategoryService } from '../category/category.service';
-import { CategoryEntity } from '../category/entities/category.entity';
-import { categoryMock } from '../category/__mocks__/category.mock';
-import { createCategoryMock } from '../category/__mocks__/create-category.mock';
+import { CategoryService } from '../category.service';
+import { CategoryEntity } from '../entities/category.entity';
+import { categoryMock } from '../__mocks__/category.mock';
+import { createCategoryMock } from '../__mocks__/create-category.mock';
 
 describe('CategoryService', () => {
   let service: CategoryService;
@@ -76,5 +76,17 @@ describe('CategoryService', () => {
     expect(
       service.findCategoryByName(categoryMock.name),
     ).rejects.toThrowError();
+  });
+
+  it('should return category in find by id', async () => {
+    const category = await service.findCategoryById(categoryMock.id);
+
+    expect(category).toEqual(categoryMock);
+  });
+
+  it('should return erro in not found category by id', async () => {
+    jest.spyOn(categoryRepository, 'findOne').mockResolvedValue(undefined);
+
+    expect(service.findCategoryById).rejects.toThrowError();
   });
 });

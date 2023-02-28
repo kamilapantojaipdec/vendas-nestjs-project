@@ -29,7 +29,7 @@ export class ProductEntity {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'created_at' })
+  @UpdateDateColumn({ name: 'updated_at' })
   updateAt: Date;
 
   @ManyToOne(
