@@ -95,5 +95,3 @@ describe('UserService', () => {
     expect(user).toEqual(userEntityMock);
   });
 });
-
-// todas as funções do nosso userService agora estão testadas
