@@ -8,37 +8,41 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UserId } from 'src/decorators/user-id.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
+import { UserId } from '../decorators/user-id.decorator';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { ReturnUserDto } from './dtos/returnUser.dto';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
-import { UserEntity } from './interfaces/user.entity';
+import { UserEntity } from '../user/interfaces/user.entity';
+import { UserType } from './enum/user-type.enum';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
   @UsePipes(ValidationPipe)
   @Post()
   async createUser(@Body() createUser: CreateUserDto): Promise<UserEntity> {
     return this.userService.createUser(createUser);
   }
 
+  @Roles(UserType.Admin)
   @Get()
   async getAllUser(): Promise<ReturnUserDto[]> {
     return (await this.userService.getAllUser()).map(
       (userEntity) => new ReturnUserDto(userEntity),
-    ); // o map vai pegar o meu array de user entity, e cada vez que ele passar, ele
-    // vai transformar cada um dos itens nesse novo item que criamos:
-    // ((userEntity) => new ReturnUserDto(userEntity)), estamos convertendo todos eles
-    // no nosso returnUserDTO
-  }
-  @Get('/:userId')
-  async getUserById(@Param('userId') userId: number): Promise<UserEntity> {
-    return this.userService.getUserByIdUsingRelations(userId);
+    );
   }
 
+  @Roles(UserType.Admin)
+  @Get('/:userId')
+  async getUserById(@Param('userId') userId: number): Promise<ReturnUserDto> {
+    return new ReturnUserDto(
+      await this.userService.getUserByIdUsingRelations(userId),
+    );
+  }
+
+  @Roles(UserType.Admin, UserType.User)
   @Patch()
   @UsePipes(ValidationPipe)
   async updatePasswordUser(
