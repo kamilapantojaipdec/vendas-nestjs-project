@@ -19,7 +19,7 @@ export class CartController {
 
   @UsePipes(ValidationPipe)
   @Post()
-  async insertCart(
+  async createCart(
     @Body() insertCart: InsertCartDTO,
     @UserId() userId: number,
   ): Promise<CartEntity> {
