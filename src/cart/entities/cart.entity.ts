@@ -23,6 +23,7 @@ export class CartEntity {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
   @OneToMany(() => CartProductEntity, (cartProduct) => cartProduct.cart)
   cartProduct?: CartProductEntity[];
 }
