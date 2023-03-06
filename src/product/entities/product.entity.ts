@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { CartProductEntity } from 'src/cart-product/entities/cart-product.entity';
 
 @Entity({ name: 'product' })
@@ -32,7 +33,7 @@ export class ProductEntity {
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updateAt: Date;
+  updatedAt: Date;
 
   @OneToMany(() => CartProductEntity, (cartProduct) => cartProduct.product)
   cartProduct?: CartProductEntity[];
