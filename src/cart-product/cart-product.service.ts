@@ -14,6 +14,7 @@ export class CartProductService {
     private readonly cartProductRepository: Repository<CartProductEntity>,
     private readonly productService: ProductService,
   ) {}
+
   async verifyProductInCart(
     productId: number,
     cartId: number,
@@ -29,6 +30,7 @@ export class CartProductService {
     }
     return cartProduct;
   }
+
   async createProductInCart(
     insertCartDTO: InsertCartDTO,
     cartId: number,
@@ -39,6 +41,7 @@ export class CartProductService {
       cartId,
     });
   }
+
   async insertProductInCart(
     insertCartDTO: InsertCartDTO,
     cart: CartEntity,
