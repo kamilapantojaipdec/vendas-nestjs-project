@@ -25,9 +25,11 @@ export class CartProductService {
         cartId,
       },
     });
+
     if (!cartProduct) {
       throw new NotFoundException('Product not found in cart');
     }
+
     return cartProduct;
   }
 
@@ -47,13 +49,16 @@ export class CartProductService {
     cart: CartEntity,
   ): Promise<CartProductEntity> {
     await this.productService.findProductById(insertCartDTO.productId);
+
     const cartProduct = await this.verifyProductInCart(
       insertCartDTO.productId,
       cart.id,
     ).catch(() => undefined);
+
     if (!cartProduct) {
       return this.createProductInCart(insertCartDTO, cart.id);
     }
+
     return this.cartProductRepository.save({
       ...cartProduct,
       amount: cartProduct.amount + insertCartDTO.amount,
