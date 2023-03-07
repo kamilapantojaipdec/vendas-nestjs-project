@@ -14,6 +14,7 @@ import { updateCartMock } from '../../cart/__mocks__/update-cart.mock';
 
 describe('CartProductService', () => {
   let service: CartProductService;
+  let prodcutService: ProductService;
   let productService: ProductService;
   let cartProductRepository: Repository<CartProductEntity>;
 
@@ -39,6 +40,7 @@ describe('CartProductService', () => {
     }).compile();
 
     service = module.get<CartProductService>(CartProductService);
+    prodcutService = module.get<ProductService>(ProductService);
     productService = module.get<ProductService>(ProductService);
     cartProductRepository = module.get<Repository<CartProductEntity>>(
       getRepositoryToken(CartProductEntity),
@@ -47,6 +49,7 @@ describe('CartProductService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+    expect(prodcutService).toBeDefined();
     expect(productService).toBeDefined();
     expect(cartProductRepository).toBeDefined();
   });
