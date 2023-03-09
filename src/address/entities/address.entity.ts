@@ -10,7 +10,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { OrderEntity } from 'src/order/entities/orders.entity';
+import { OrderEntity } from '../../order/entities/orders.entity';
 
 @Entity({ name: 'address' })
 export class AddressEntity {

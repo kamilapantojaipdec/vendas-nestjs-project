@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { OrderEntity } from 'src/order/entities/orders.entity';
+import { OrderEntity } from '../../order/entities/orders.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {

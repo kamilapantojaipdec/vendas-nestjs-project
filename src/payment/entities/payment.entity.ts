@@ -1,5 +1,5 @@
-import { OrderEntity } from 'src/order/entities/orders.entity';
-import { PaymentStatusEntity } from 'src/payment-status/entities/payment-status.entity';
+import { OrderEntity } from '../../order/entities/orders.entity';
+import { PaymentStatusEntity } from '../../payment-status/entities/payment-status.entity';
 import {
   Column,
   Entity,
