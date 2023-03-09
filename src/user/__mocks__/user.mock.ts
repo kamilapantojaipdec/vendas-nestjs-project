@@ -11,4 +11,5 @@ export const userEntityMock: UserEntity = {
   phone: '999999999',
   typeUser: UserType.User,
   updatedAt: new Date(),
+  orders: [],
 };
