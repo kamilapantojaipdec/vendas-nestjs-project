@@ -6,7 +6,7 @@ import { OrderService } from '../order.service';
 
 describe('OrderService', () => {
   let service: OrderService;
-  let orderRepository: Repository<OrderEntity>;
+  let orderRepositoty: Repository<OrderEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,13 +22,13 @@ describe('OrderService', () => {
     }).compile();
 
     service = module.get<OrderService>(OrderService);
-    orderRepository = module.get<Repository<OrderEntity>>(
+    orderRepositoty = module.get<Repository<OrderEntity>>(
       getRepositoryToken(OrderEntity),
     );
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-    expect(orderRepository).toBeDefined();
+    expect(orderRepositoty).toBeDefined();
   });
 });

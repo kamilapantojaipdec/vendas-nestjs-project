@@ -49,3 +49,5 @@ export class AddressEntity {
   @OneToMany(() => OrderEntity, (order) => order.address)
   orders?: OrderEntity[];
 }
+
+// ======================= aqui ta ok

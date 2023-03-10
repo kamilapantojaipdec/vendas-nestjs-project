@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class createTableStatus1678278282155 implements MigrationInterface {
+export class createTableStatus1676207674922 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     queryRunner.query(`
             CREATE TABLE public.payment_status (
@@ -27,7 +27,7 @@ export class createTableStatus1678278282155 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     queryRunner.query(`
-        DROP TABLE public.payment_status;
-    `);
+            DROP TABLE public.payment_status;
+        `);
   }
 }
