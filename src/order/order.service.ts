@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartService } from 'src/cart/cart.service';
 import { CartEntity } from 'src/cart/entities/cart.entity';
@@ -11,7 +11,6 @@ import { ProductService } from 'src/product/product.service';
 import { Repository } from 'typeorm';
 import { CreateOrderDTO } from './dtos/create-order.dto';
 import { OrderEntity } from './entities/orders.entity';
-
 @Injectable()
 export class OrderService {
   constructor(
@@ -22,7 +21,6 @@ export class OrderService {
     private readonly orderProductService: OrderProductService,
     private readonly productService: ProductService,
   ) {}
-
   async saveOrder(
     createOrderDTO: CreateOrderDTO,
     userId: number,
@@ -35,7 +33,6 @@ export class OrderService {
       userId,
     });
   }
-
   async createOrderProductUsingCart(
     cart: CartEntity,
     orderId: number,
@@ -53,7 +50,6 @@ export class OrderService {
       ),
     );
   }
-
   async createOrder(
     createOrderDTO: CreateOrderDTO,
     userId: number,
@@ -62,19 +58,40 @@ export class OrderService {
     const products = await this.productService.findAllProducts(
       cart.cartProduct?.map((cartProduct) => cartProduct.productId),
     );
-
     const payment: PaymentEntity = await this.paymentService.createPayment(
       createOrderDTO,
       products,
       cart,
     );
-
     const order = await this.saveOrder(createOrderDTO, userId, payment);
 
     await this.createOrderProductUsingCart(cart, order.id, products);
 
-    // await this.cartService.clearCart(userId);
+    await this.cartService.clearCart(userId);
 
     return order;
+  }
+
+  async findOrdersByUserId(userId: number): Promise<OrderEntity[]> {
+    const orders = await this.orderRepository.find({
+      where: {
+        userId,
+      },
+      relations: {
+        address: true,
+        ordersProduct: {
+          product: true,
+        },
+        payment: {
+          paymentStatus: true,
+        },
+      },
+    });
+
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException('Orders not found');
+    }
+
+    return orders;
   }
 }
