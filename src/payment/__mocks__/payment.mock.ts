@@ -1,4 +1,4 @@
-import { PaymentType } from 'src/payment/enums/payment-type.enum';
+import { PaymentType } from '../../payment/enums/payment-type.enum';
 import { PaymentEntity } from '../entities/payment.entity';
 
 export const paymentMock: PaymentEntity = {
