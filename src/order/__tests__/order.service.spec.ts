@@ -10,7 +10,7 @@ import { OrderService } from '../order.service';
 
 describe('OrderService', () => {
   let service: OrderService;
-  let orderRepositoty: Repository<OrderEntity>;
+  let orderRepository: Repository<OrderEntity>;
   let paymentService: PaymentService;
   let cartService: CartService;
   let orderProductService: OrderProductService;
@@ -59,13 +59,13 @@ describe('OrderService', () => {
     cartService = module.get<CartService>(CartService);
     orderProductService = module.get<OrderProductService>(OrderProductService);
     productService = module.get<ProductService>(ProductService);
-    orderRepositoty = module.get<Repository<OrderEntity>>(
+    orderRepository = module.get<Repository<OrderEntity>>(
       getRepositoryToken(OrderEntity),
     );
   });
   it('should be defined', () => {
     expect(service).toBeDefined();
-    expect(orderRepositoty).toBeDefined();
+    expect(orderRepository).toBeDefined();
     expect(cartService).toBeDefined();
     expect(paymentService).toBeDefined();
     expect(orderProductService).toBeDefined();
