@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { PaymentCreditCardEntity } from './entities/payment-credit-card.entity';
 import { PaymentPixEntity } from './entities/payment-pix.entity';
 import { PaymentEntity } from './entities/payment.entity';
+
 @Injectable()
 export class PaymentService {
   constructor(
@@ -16,23 +17,25 @@ export class PaymentService {
     private readonly paymentRepository: Repository<PaymentEntity>,
   ) {}
 
-  generateFinalPrice(cart: CartEntity, products: ProductEntity[]) {
+  generateFinalPrice(cart: CartEntity, products: ProductEntity[]): number {
     if (!cart.cartProduct || cart.cartProduct.length === 0) {
       return 0;
-    }
+    } // aqui verifica se o carrinho está vazio
 
-    return cart.cartProduct
-      .map((cartProduct: CartProductEntity) => {
-        const product = products.find(
-          (product) => product.id === cartProduct.productId,
-        );
-        if (product) {
-          return cartProduct.amount * product.price;
-        }
-
-        return 0;
-      })
-      .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    return Number(
+      cart.cartProduct
+        .map((cartProduct: CartProductEntity) => {
+          const product = products.find(
+            (product) => product.id === cartProduct.productId,
+          );
+          if (product) {
+            return cartProduct.amount * product.price;
+          }
+          return 0;
+        })
+        .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+        .toFixed(2),
+    );
   }
 
   async createPayment(
