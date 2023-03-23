@@ -5,28 +5,27 @@ import { OrderProductService } from '../../order-product/order-product.service';
 import { PaymentService } from '../../payment/payment.service';
 import { ProductService } from '../../product/product.service';
 import { Repository } from 'typeorm';
-import { OrderEntity } from '../entities/orders.entity';
+import { OrderEntity } from '../../order/entities/orders.entity';
 import { OrderService } from '../order.service';
-import { userEntityMock } from 'src/user/__mocks__/user.mock';
 import { orderMock } from '../__mocks__/order.mock';
+import { userEntityMock } from '../../user/__mocks__/user.mock';
 import { NotFoundException } from '@nestjs/common';
-import { cartMock } from 'src/cart/__mocks__/cart.mock';
-import { cartProductMock } from 'src/cart-product/__mocks__/cart-product.mock';
-import { productMock } from 'src/product/__Mocks__/product.mock';
-import { orderProductMock } from 'src/order-product/__mocks__/order-product.mock';
+import { orderProductMock } from '../../order-product/__mocks__/order-product.mock';
+import { cartMock } from '../../cart/__mocks__/cart.mock';
+import { productMock } from '../../product/__Mocks__/product.mock';
+import { cartProductMock } from '../../cart-product/__mocks__/cart-product.mock';
 import { createOrderPixMock } from '../__mocks__/create-order.mock';
-import { paymentMock } from 'src/payment/__mocks__/payment.mock';
+import { paymentMock } from '../../payment/__mocks__/payment.mock';
 
 jest.useFakeTimers().setSystemTime(new Date('2020-01-01'));
 
 describe('OrderService', () => {
   let service: OrderService;
-  let orderRepository: Repository<OrderEntity>;
+  let orderRepositoty: Repository<OrderEntity>;
   let paymentService: PaymentService;
   let cartService: CartService;
   let orderProductService: OrderProductService;
   let productService: ProductService;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -34,57 +33,60 @@ describe('OrderService', () => {
         {
           provide: PaymentService,
           useValue: {
-            createPayment: jest.fn(),
+            createPayment: jest.fn().mockResolvedValue(paymentMock),
           },
         },
         {
           provide: CartService,
           useValue: {
-            findCartByUserId: jest.fn(),
+            findCartByUserId: jest.fn().mockResolvedValue({
+              ...cartMock,
+              cartProduct: [cartProductMock],
+            }),
             clearCart: jest.fn(),
           },
         },
         {
           provide: OrderProductService,
           useValue: {
-            createOrderProduct: jest.fn(),
+            createOrderProduct: jest.fn().mockResolvedValue(orderProductMock),
           },
         },
         {
           provide: ProductService,
           useValue: {
-            findAll: jest.fn(),
+            findAllProducts: jest.fn().mockResolvedValue([productMock]),
           },
         },
         {
           provide: getRepositoryToken(OrderEntity),
           useValue: {
-            find: '',
+            find: jest.fn().mockResolvedValue([orderMock]),
+            save: jest.fn().mockResolvedValue(orderMock),
           },
         },
       ],
     }).compile();
-
     service = module.get<OrderService>(OrderService);
     paymentService = module.get<PaymentService>(PaymentService);
     cartService = module.get<CartService>(CartService);
     orderProductService = module.get<OrderProductService>(OrderProductService);
     productService = module.get<ProductService>(ProductService);
-    orderRepository = module.get<Repository<OrderEntity>>(
+    orderRepositoty = module.get<Repository<OrderEntity>>(
       getRepositoryToken(OrderEntity),
     );
   });
   it('should be defined', () => {
     expect(service).toBeDefined();
-    expect(orderRepository).toBeDefined();
+    expect(orderRepositoty).toBeDefined();
     expect(cartService).toBeDefined();
     expect(paymentService).toBeDefined();
     expect(orderProductService).toBeDefined();
     expect(productService).toBeDefined();
   });
 
-  it('should return orders in findOrdersById', async () => {
-    const spy = jest.spyOn(orderRepository, 'find');
+  it('should return orders in findOrdersByUserId', async () => {
+    const spy = jest.spyOn(orderRepositoty, 'find');
     const orders = await service.findOrdersByUserId(userEntityMock.id);
 
     expect(orders).toEqual([orderMock]);
@@ -105,7 +107,7 @@ describe('OrderService', () => {
   });
 
   it('should return NotFoundException in find return empty', async () => {
-    jest.spyOn(orderRepository, 'find').mockResolvedValue([]);
+    jest.spyOn(orderRepositoty, 'find').mockResolvedValue([]);
 
     expect(service.findOrdersByUserId(userEntityMock.id)).rejects.toThrowError(
       NotFoundException,
@@ -136,7 +138,8 @@ describe('OrderService', () => {
   });
 
   it('should return order in saveOrder', async () => {
-    const spy = jest.spyOn(orderRepository, 'save');
+    const spy = jest.spyOn(orderRepositoty, 'save');
+
     const order = await service.saveOrder(
       createOrderPixMock,
       userEntityMock.id,
@@ -153,14 +156,14 @@ describe('OrderService', () => {
   });
 
   it('should expection in error save', async () => {
-    jest.spyOn(orderRepository, 'save').mockRejectedValue(new Error());
+    jest.spyOn(orderRepositoty, 'save').mockRejectedValue(new Error());
 
     expect(
       service.saveOrder(createOrderPixMock, userEntityMock.id, paymentMock),
     ).rejects.toThrowError();
   });
 
-  it('should return order in create order sucess', async () => {
+  it('should return order in create order success', async () => {
     const spyCartService = jest.spyOn(cartService, 'findCartByUserId');
     const spyProductService = jest.spyOn(productService, 'findAllProducts');
     const spyCartServiceClear = jest.spyOn(cartService, 'clearCart');
@@ -169,7 +172,7 @@ describe('OrderService', () => {
       'createOrderProduct',
     );
     const spyPaymentService = jest.spyOn(paymentService, 'createPayment');
-    const spySave = jest.spyOn(orderRepository, 'save');
+    const spySave = jest.spyOn(orderRepositoty, 'save');
 
     const order = await service.createOrder(
       createOrderPixMock,
