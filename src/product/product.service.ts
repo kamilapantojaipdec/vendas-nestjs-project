@@ -1,16 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from '../category/category.service';
 import { DeleteResult, In, Repository } from 'typeorm';
 import { CreateProductDTO } from './dtos/create-product.dto';
 import { ProductEntity } from './entities/product.entity';
 import { UpdateProductDTO } from './../product/dtos/update-product.dto';
+import { CountProduct } from './dtos/count-product.dto';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
+    @Inject(forwardRef(() => CategoryService))
     private readonly categoryService: CategoryService,
   ) {}
 
@@ -44,12 +51,14 @@ export class ProductService {
     }
     return products;
   }
+
   async createProduct(createProduct: CreateProductDTO): Promise<ProductEntity> {
     await this.categoryService.findCategoryById(createProduct.categoryId);
     return this.productRepository.save({
       ...createProduct,
     });
   }
+
   async findProductById(productId: number): Promise<ProductEntity> {
     const product = await this.productRepository.findOne({
       where: {
@@ -61,10 +70,12 @@ export class ProductService {
     }
     return product;
   }
+
   async deleteProduct(productId: number): Promise<DeleteResult> {
     await this.findProductById(productId);
     return this.productRepository.delete({ id: productId });
   }
+
   async updateProduct(
     updateProduct: UpdateProductDTO,
     productId: number,
@@ -74,5 +85,13 @@ export class ProductService {
       ...product,
       ...updateProduct,
     });
+  }
+
+  async countProductsByCategoryId(): Promise<CountProduct[]> {
+    return this.productRepository
+      .createQueryBuilder('product')
+      .select('product.category_id, COUNT(*) AS TOTAL')
+      .groupBy('produc.category_id')
+      .getRawMany();
   }
 }
