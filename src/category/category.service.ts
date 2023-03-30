@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,6 +19,7 @@ export class CategoryService {
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
 
+    @Inject(forwardRef(() => ProductService))
     private readonly productService: ProductService,
   ) {}
 
@@ -53,39 +56,57 @@ export class CategoryService {
     );
   }
 
-  async findCategoryById(categoryId: number): Promise<CategoryEntity> {
+  async findCategoryById(
+    categoryId: number,
+    isRelations?: boolean,
+  ): Promise<CategoryEntity> {
+    const relations = isRelations
+      ? {
+          products: true,
+        }
+      : undefined;
+
     const category = await this.categoryRepository.findOne({
       where: {
         id: categoryId,
       },
+      relations,
     });
+
     if (!category) {
       throw new NotFoundException(`Category id: ${categoryId} not found`);
     }
+
     return category;
   }
+
   async findCategoryByName(name: string): Promise<CategoryEntity> {
     const category = await this.categoryRepository.findOne({
       where: {
         name,
       },
     });
+
     if (!category) {
       throw new NotFoundException(`Category name ${name} not found`);
     }
+
     return category;
   }
+
   async createCategory(
     createCategory: CreateCategory,
   ): Promise<CategoryEntity> {
     const category = await this.findCategoryByName(createCategory.name).catch(
       () => undefined,
     );
+
     if (category) {
       throw new BadRequestException(
         `Category name ${createCategory.name} exist`,
       );
     }
+
     return this.categoryRepository.save(createCategory);
   }
 }

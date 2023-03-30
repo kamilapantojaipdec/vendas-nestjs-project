@@ -22,7 +22,7 @@ describe('CategoryService', () => {
         {
           provide: ProductService,
           useValue: {
-            countProdutsByCategoryId: jest
+            countProductsByCategoryId: jest
               .fn()
               .mockResolvedValue([countProductMock]),
           },
