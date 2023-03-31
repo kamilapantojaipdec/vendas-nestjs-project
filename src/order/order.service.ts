@@ -21,6 +21,7 @@ export class OrderService {
     private readonly orderProductService: OrderProductService,
     private readonly productService: ProductService,
   ) {}
+
   async saveOrder(
     createOrderDTO: CreateOrderDTO,
     userId: number,
@@ -33,6 +34,7 @@ export class OrderService {
       userId,
     });
   }
+
   async createOrderProductUsingCart(
     cart: CartEntity,
     orderId: number,
@@ -50,6 +52,7 @@ export class OrderService {
       ),
     );
   }
+
   async createOrder(
     createOrderDTO: CreateOrderDTO,
     userId: number,
@@ -85,6 +88,20 @@ export class OrderService {
         payment: {
           paymentStatus: true,
         },
+      },
+    });
+
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException('Orders not found');
+    }
+
+    return orders;
+  }
+
+  async findAllOrders(): Promise<OrderEntity[]> {
+    const orders = await this.orderRepository.find({
+      relations: {
+        user: true,
       },
     });
 
