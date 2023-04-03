@@ -1,4 +1,4 @@
-import { ReturnUserDto } from 'src/user/dtos/returnUser.dto';
+import { ReturnUserDto } from '../../user/dtos/returnUser.dto';
 import { OrderEntity } from '../entities/orders.entity';
 
 export class ReturnOderDTO {
